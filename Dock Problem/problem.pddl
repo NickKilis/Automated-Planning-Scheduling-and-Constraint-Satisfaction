@@ -1,0 +1,47 @@
+﻿(define (problem drcpc)
+  (:domain dock-robot-crane-piers-containers)
+
+  (:objects
+   location1 location2 location3 c1 c2 c3 robot crane)
+
+  (:init
+    (LOCATION location1)
+    (LOCATION location2)
+    (LOCATION location3)
+    (CONTAINER c1)
+    (CONTAINER c2)
+    (CONTAINER c3)
+    (ROBOT robot)
+    (CRANE crane)
+    (BELONGS crane robot)
+    (FREE crane)
+    
+    (ADJACENT location1 location2)
+    (ADJACENT location1 location3)
+    (ADJACENT location2 location1)
+    (ADJACENT location3 location1)
+    (AT_ROBBY location2)
+    (LOCATED_CONTAINER c1 location1)
+    (LOCATED_CONTAINER c2 location2)
+    (LOCATED_CONTAINER c3 location1)
+    
+    (FLOOR c1)
+    (FLOOR c2)
+    (ON c3 c1)
+    (EMPTY_TOP c2)
+    (EMPTY_TOP c3)
+  )
+
+  (:goal
+    (and (AT_ROBBY location1)
+	     (LOCATED_CONTAINER c1 location3)
+         (LOCATED_CONTAINER c2 location3)
+         (LOCATED_CONTAINER c3 location3)
+         (ON c1 c2)
+         (FLOOR c2)
+         (FLOOR c3)
+         (EMPTY_TOP c1)
+         (EMPTY_TOP c3)
+	)
+    )
+)

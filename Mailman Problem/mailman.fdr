@@ -1,0 +1,79 @@
+LOCATIONS = {L1,L2,L3,L4,L5,L6,L7,L8,L9,L10,L11,L12,L13,L14};
+MAILMEN   = {man1};
+LETTERS   = {letter1,letter2};
+BAGS      = {bag1};
+MAILBOXES = {box1};
+POSITIONS = LOCATIONS+BAGS+MAILBOXES;
+SUBWAYS   = {red,blue};
+SUBWAY_NIL= SUBWAYS+{nil};
+
+loc(man1)     : LOCATIONS;
+is_below(man1): SUBWAY_NIL;
+pos(letter1)  : POSITIONS;
+pos(letter2)  : POSITIONS;
+
+belongs(bag1,man1);
+pos_mailbox(box1,L7);
+
+road(L1,L2);road(L2,L1);
+road(L2,L3);road(L3,L2);
+road(L3,L4);road(L4,L3);
+road(L4,L5);road(L5,L4);
+road(L5,L12);road(L12,L5);
+road(L2,L11);road(L11,L2);
+road(L11,L6);road(L6,L11);
+road(L11,L9);road(L9,L11);
+road(L6,L10);road(L10,L6);
+road(L9,L10);road(L10,L9);
+road(L10,L8);road(L8,L10);
+road(L8,L13);road(L13,L8);
+road(L13,L14);road(L14,L13);
+
+subway_red(L8,L6);
+subway_red(L6,L5);
+subway_red(L5,L7);
+subway_red(L7,L8);
+
+subway_blue(L8,L6);
+subway_blue(L6,L2);
+subway_blue(L2,L3);
+subway_blue(L3,L5);
+subway_blue(L5,L7);
+subway_blue(L7,L8);
+
+station(L2);
+station(L3);
+station(L6);
+station(L7);
+station(L8);
+
+embark(M:MAILMEN,X:LOCATIONS,Y:SUBWAYS)
+pre: loc(M)=X & station(X)
+eff: is_below(M)<-Y;
+
+disembark(M:MAILMEN,X:LOCATIONS)
+pre: loc(M)=X & station(X) & !is_below(M)=nil
+eff: is_below(M)<-nil;
+
+move_by_feet(M:MAILMEN,X:LOCATIONS,Y:LOCATIONS)
+pre: loc(M)=X & road(X,Y) & is_below(M)=nil
+eff: loc(M)<-Y;
+
+move_by_subway_red(M:MAILMEN,X:LOCATIONS,Y:LOCATIONS)
+pre: loc(M)=X & subway_red(X,Y) & is_below(M)=red
+eff: loc(M)<-Y;
+
+move_by_subway_blue(M:MAILMEN,X:LOCATIONS,Y:LOCATIONS)
+pre: loc(M)=X & subway_blue(X,Y) & is_below(M)=blue
+eff: loc(M)<-Y;
+
+pick_letter(M:MAILMEN,X:LOCATIONS,L:LETTERS,B:BAGS)
+pre: loc(M)=X & pos(L)=X & belongs(B,M) & is_below(M)=nil
+eff: pos(L)<-B;
+
+drop_letter(M:MAILMEN,X:LOCATIONS,L:LETTERS,B:BAGS,MB:MAILBOXES)
+pre: loc(M)=X & belongs(B,M) & pos(L)=B & pos_mailbox(MB,X) & is_below(M)=nil
+eff: pos(L)<-MB;
+
+initial = {loc(man1)<-L14,pos(letter1)<-L10,pos(letter2)<-L13,is_below(man1)<-nil};
+goals   = {loc(man1)<-L7,is_below(man1)<-nil,pos(letter1)<-box1,pos(letter2)<-box1};
